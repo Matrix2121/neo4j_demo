@@ -18,6 +18,7 @@ MATCH (u: User) WHERE u.full_name = "Vasil Stoykov" RETURN u;                   
 MATCH (u:User)-[:WORKS_AS {is_current: true}]->(j:Job) where j.id = "j_intern" RETURN u, j;            //returns nodes with labels User and Job where the User is currently working at this possition
 
 MATCH (s:Skill)<-[:HAS_SKILL]-(User)-[:WORKS_AS]->(Job {id: "j_intern"}) RETURN s;                     //returns the skills that people have that also work the job specified
+
 MATCH (s:Skill)<-[:HAS_SKILL]-(u:User)-[:WORKS_AS]->(j: Job {id: "j_sen_dev"}) RETURN u, s, j;         //better representation
 
 //This query returns all users with salaries bigger than or equal to 80 000
@@ -90,5 +91,7 @@ RETURN j.title AS Position, max(w.salary) AS MaxSalary, min(w.salary) AS MinSala
 //---Role-Based Access Control---
 //The following querries should be executed on the system db in order to create the roles with the specified access rights
 CREATE USER auditor SET PASSWORD 'Welcome2026' CHANGE NOT REQUIRED;         //creates new role
+
 GRANT ROLE reader TO auditor;                                               //grants specified role access
+
 DENY READ {salary} ON GRAPH neo4j RELATIONSHIPS WORKS_AS TO reader          //deny read access of a specified property for the specified role
